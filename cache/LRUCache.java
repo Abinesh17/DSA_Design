@@ -83,19 +83,22 @@ public class LRUCache {
         lock.lock();
         try {
             if (idToDataMap.containsKey(key)) {
-                Node node = idToDataMap.remove(key);
+                Node node = idToDataMap.get(key);
+                node.value = value;
                 deleteNode(node);
+                addToFront(node);
+                return;
+            }
+
+            if (idToDataMap.size() == maxCapacity) {
+                Node node = tail.prev;
+                deleteNode(node);
+                idToDataMap.remove(node.key);
             }
 
             Node newNode = new Node(key, value);
             idToDataMap.put(key, newNode);
             addToFront(newNode);
-
-            if (idToDataMap.size() > maxCapacity) {
-                Node node = tail.prev;
-                deleteNode(node);
-                idToDataMap.remove(node.key);
-            }
         }
         finally {
             lock.unlock();
