@@ -40,14 +40,13 @@ public class LRUCache {
 
     public String get(int id)
     {
+       lock.lock();
         if (!idToDataMap.containsKey(id)) {
             System.out.println(id + " not available in cache");
             return null;
         }
 
         Node data = idToDataMap.get(id);
-
-        lock.lock();
         try {
 
             // consider this as recently used
